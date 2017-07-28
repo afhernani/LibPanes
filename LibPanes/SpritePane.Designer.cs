@@ -1,6 +1,6 @@
 ﻿namespace LibPanes
 {
-    partial class UserControl1
+    partial class SpritePane
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -28,8 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // SpritePane
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "SpritePane";
+            this.Size = new System.Drawing.Size(187, 102);
+            this.MouseEnter += new System.EventHandler(this.SpritePane_MouseEnter);
+            this.MouseLeave += new System.EventHandler(this.SpritePane_MouseLeave);
+            this.MouseHover += new System.EventHandler(this.SpritePane_MouseHover);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
