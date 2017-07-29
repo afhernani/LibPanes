@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Versioning;
 using Gif.Components;
 using LibUtility;
 
@@ -31,15 +32,37 @@ namespace LibPanes
 		public int CurrentFrame{ get; set; }
 		private bool Reverse{ get; set; }
 		private int Step{ get; set; }
-        public string Namefilegif { get; set; }
+
+		public int Time{ get; set; }
+
+		private string _namefile;
+		
+        public string Namefilegif { 
+			get{ return _namefile; }
+			set
+			{
+				if(String.IsNullOrEmpty(value)){
+					_namefile = value;
+				   }
+				else{
+					if(Path.GetExtension(value).ToUpper() == ".gif".ToUpper()){
+						_namefile = value;
+						frames.Clear();
+						frames = EnumerateFrames(_namefile);
+					}else{
+						_namefile = "Not";
+					}
+				}
+			}
+		}
 		
 		public ImageGif(string path)
 		{
 			CurrentFrame = -1;
 			Step = 1;
 			Reverse = false;
-            Namefilegif = path;
-			frames = EnumerateFrames(path);
+			Time = 800;
+            Namefilegif = path;		
 			/*GifImage = Image.FromFile(path);
 			Dimension = new FrameDimension(GifImage.FrameDimensionsList[0]);
 			Count = GifImage.GetFrameCount(Dimension);*/
@@ -49,10 +72,14 @@ namespace LibPanes
             CurrentFrame = -1;
             Step = 1;
             Reverse = false;
-            Count = 0;
+			Time = 800;
+			//Count = 0;
+			Namefilegif = String.Empty;
         }
+        /// <summary>
+        /// whether the gif should play backwards when it reaches the end
+        /// </summary>
 		public bool ReverseAtEnd {
-        //whether the gif should play backwards when it reaches the end
 			get { return Reverse; }
 			set { Reverse = value; }
 		}
@@ -96,6 +123,14 @@ namespace LibPanes
 			}
 			return null;
 			//return a copy of it
+		}
+		/// <summary>
+		/// retorna el numero de fames en imagegif
+		/// -1 si no exite ninguna imagen
+		/// </summary>
+		/// <returns></returns>
+		public int GetCount(){
+			return Count;
 		}
 		/// <summary>
 		/// lista de imagenes en bytes.
@@ -262,13 +297,14 @@ namespace LibPanes
             }
             AnimatedGifEncoder egif = new AnimatedGifEncoder();
             egif.Start(pathfile);
-            egif.SetDelay(800);
+            egif.SetDelay(Time);
             egif.SetRepeat(0);
             for (int i = 0; i < img.Length; i++)
             {
                 egif.AddFrame(img[i]);
             }
             egif.Finish();
+			Namefilegif = pathfile;
             Debug.WriteLine("Finalizada la construccion del Gif: " + pathfile);
         }
         #endregion
