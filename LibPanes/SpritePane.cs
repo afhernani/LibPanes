@@ -11,13 +11,14 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.Xml.Serialization;
 
 namespace LibPanes
 {
 	/// <summary>
 	/// Description of SpritePane.
 	/// </summary>
-	//[Serializable, XmlRoot("SpritePane", Namespace = "", IsNullable = false)]
+	[Serializable, XmlRoot("SpritePane", Namespace = "", IsNullable = false)]
 	public partial class SpritePane: UserControl
 	{
 		public SpritePane()
@@ -42,9 +43,9 @@ namespace LibPanes
 			}
 		}
 
-		//[NonSerialized]
+		[NonSerialized]
 		private Thread t;
-		//[NonSerialized]
+		[NonSerialized]
 		private ImageGif _imagegif = null;
 		[Category("Action")]
 		[Description("int represent to active imagen in sprite-pane.")]
