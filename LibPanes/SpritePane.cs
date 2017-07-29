@@ -245,5 +245,14 @@ namespace LibPanes
 				}
 			}
 		}
+        /// <summary>
+        /// save all imagens contens in SpritePane
+        /// </summary>
+        /// <param name="path"></param>
+        public void SaveAllImagens(string path)
+        {
+            if(_imagegif!=null)
+                _imagegif.SaveAllImagenToFile(path);
+        }
 	}
 }

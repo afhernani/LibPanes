@@ -287,7 +287,11 @@ namespace LibPanes
             }
         }
         #endregion
-        #region AddAnotherImageGif
+        #region Save-imagens
+        /// <summary>
+        /// save with gif to file.
+        /// </summary>
+        /// <param name="pathfile"></param>
         public void SaveImageGif(string pathfile)
         {
             Image[] img = new Image[frames.Count];
@@ -306,6 +310,27 @@ namespace LibPanes
             egif.Finish();
 			Namefilegif = pathfile;
             Debug.WriteLine("Finalizada la construccion del Gif: " + pathfile);
+        }
+        /// <summary>
+        /// save all imagens saparate in files
+        /// </summary>
+        /// <param name="path"></param>
+        public void SaveAllImagenToFile(string path)
+        {
+            //existe el directorio
+            string dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir)) return; //salimos no cierto
+            string nameb = Path.GetFileNameWithoutExtension(path);
+            if (String.IsNullOrEmpty(nameb)) return; //salimos x que no tenemos un nombre.
+            string ext = Path.GetExtension(path);
+            //llegados aqui guardamos si existe algo.
+            int n = 000;
+            foreach (var item in frames)
+            {
+                Image paso = ConvertBytesToImage(item);
+                paso.Save(Path.Combine(dir, nameb + n.ToString())+ext);
+                n++;
+            }
         }
         #endregion
 
