@@ -332,6 +332,16 @@ namespace LibPanes
                 n++;
             }
         }
+        /// <summary>
+        /// save current imagen to file sin comprobaciones
+        /// de ningun tipo.
+        /// </summary>
+        /// <param name="path"></param>
+        public void SaveCurrentImagen(string path)
+        {
+            Image pas = ConvertBytesToImage(frames[CurrentFrame]);
+            pas.Save(path);
+        }
         #endregion
 
 
