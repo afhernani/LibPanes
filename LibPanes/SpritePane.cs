@@ -182,7 +182,7 @@ namespace LibPanes
 		[Description("time in milisecons to renove imge in component.")]
 		public int Time { get; set; }
 		
-		void SpritePaneMouseHover(object sender, EventArgs e)
+		private void SpritePane_MouseHover(object sender, EventArgs e)
 		{
 			Debug.WriteLine("SpritePane_SpritePane_MouseHover()");
 			if (t != null)
@@ -194,12 +194,12 @@ namespace LibPanes
 			t = new Thread(ActionImagen);
 			t.Start();
 		}
-		void SpritePaneMouseEnter(object sender, EventArgs e)
+		private void SpritePane_MouseEnter(object sender, EventArgs e)
 		{
 			Debug.WriteLine("SpritePane_SpritePane_MouseEnter()");
 			Accion = true;
 		}
-		void SpritePaneMouseLeave(object sender, EventArgs e)
+		private void SpritePane_MouseLeave(object sender, EventArgs e)
 		{
 			Debug.WriteLine("SpritePane_SpritePaneMuseLeave()");;
 			Accion = false;
