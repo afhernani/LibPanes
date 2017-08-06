@@ -47,7 +47,8 @@ namespace LibPanes
 			Accion = false;
 			CurrentFrame = -1;
 			SizeMode = PictureBoxSizeMode.Zoom;
-			this.Invalidate(this.ClientRectangle);
+			//this.Invalidate(this.ClientRectangle);
+            ResizeRedraw = true;
 		}
 		/// <summary>
 		/// variable privada almacena el modo de visualizacion
@@ -118,9 +119,10 @@ namespace LibPanes
 		private void PaintGif(object e)
 		{
 			Debug.WriteLine("SpritePane_PaintGif()");
-			Debug.WriteLine("PaintGif()");
-			Invalidate(this.ClientRectangle);
-		}
+			//Invalidate(this.ClientRectangle);
+            OnSizeChanged();
+
+        }
 
 		/// <summary>
 		/// from file
@@ -194,7 +196,31 @@ namespace LibPanes
 			t = new Thread(ActionImagen);
 			t.Start();
 		}
-		private void SpritePane_MouseEnter(object sender, EventArgs e)
+        #region onlayaut
+        /// <summary>
+        /// call base handler first, otherwise we get old
+        /// dimenions, not the new ones.
+        /// </summary>
+        /// <param name="levent"></param>
+        protected override void OnLayout(LayoutEventArgs levent)
+        {
+            Debug.WriteLine("SpritePane_OnLayout");
+            // call the base handler first, otherwise we get old 
+            //dimensions, not the new ones
+            base.OnLayout(levent);
+            OnSizeChanged();
+        }
+        private void OnSizeChanged()
+        {
+            Debug.WriteLine("SpritePane_OnSizeChanged()");
+            //aqui no hay nada que dibujar solo actualizar la imagen
+            using (PaintEventArgs e = new PaintEventArgs(this.CreateGraphics(), ClientRectangle))
+            {
+                DrawCurrentFrame(e);
+            }
+        }
+        #endregion
+        private void SpritePane_MouseEnter(object sender, EventArgs e)
 		{
 			Debug.WriteLine("SpritePane_SpritePane_MouseEnter()");
 			Accion = true;
@@ -214,14 +240,20 @@ namespace LibPanes
 				_imagegif.SaveImageGif(pathfile);
 			}
 		}
-		
-		protected override void OnPaint(PaintEventArgs e)
+        protected override void OnResize(EventArgs e)
+        {
+            Debug.WriteLine("SpritePane_OnResize()");
+            base.OnResize(e);
+            OnSizeChanged();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
 		{
 			Debug.WriteLine("SpritePane_OnPaint()");
 			if (_imagegif != null && Accion == true)
 				DrawNextFrame(e);
-			if (_imagegif != null && Accion == false)
-				DrawCurrentFrame(e);
+			//if (_imagegif != null && Accion == false)
+			//	DrawCurrentFrame(e);
 			base.OnPaint(e);		
 		}
 		/// <summary>
