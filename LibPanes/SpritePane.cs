@@ -34,21 +34,21 @@ namespace LibPanes
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
-			
-			//
-			// TODO: Add constructor code after the InitializeComponent() call.
-			//
-			
-			this.SetStyle(System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
-			System.Windows.Forms.ControlStyles.ResizeRedraw |
-			System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer |
+
+            //
+            // TODO: Add constructor code after the InitializeComponent() call.
+            //
+
+            this.SetStyle(System.Windows.Forms.ControlStyles.AllPaintingInWmPaint |
+            System.Windows.Forms.ControlStyles.ResizeRedraw |
+            System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer |
 			System.Windows.Forms.ControlStyles.UserPaint, true);
 			Time = 1000;
 			Accion = false;
 			CurrentFrame = -1;
 			SizeMode = PictureBoxSizeMode.Zoom;
 			//this.Invalidate(this.ClientRectangle);
-            ResizeRedraw = true;
+            //ResizeRedraw = true;
 		}
 		/// <summary>
 		/// variable privada almacena el modo de visualizacion
@@ -60,7 +60,7 @@ namespace LibPanes
 			get { return _sizemode; }
 			set {
 				_sizemode = value;
-				this.Invalidate(this.ClientRectangle);
+				//this.Invalidate(this.ClientRectangle);
 			}
 		}
 		/// <summary>
@@ -111,7 +111,7 @@ namespace LibPanes
 				if (System.IO.File.Exists(value)) {
 					CurrentFrame = -1;
 					this.FileOpen(value);
-					Invalidate(this.ClientRectangle);
+					//Invalidate(this.ClientRectangle);
 				}
 			} 
 		}
@@ -119,9 +119,9 @@ namespace LibPanes
 		private void PaintGif(object e)
 		{
 			Debug.WriteLine("SpritePane_PaintGif()");
-			//Invalidate(this.ClientRectangle);
-            OnSizeChanged();
-
+            //Invalidate(this.ClientRectangle);
+            //OnSizeChanged(new PaintEventArgs(this.CreateGraphics(), ClientRectangle));
+            Invoke(new Action(()=> Refresh()));
         }
 
 		/// <summary>
@@ -149,7 +149,7 @@ namespace LibPanes
 				if (_imagegif != null)
 					_imagegif.Paint += PaintGif;
 				CurrentFrame = -1;
-				Invalidate(this.ClientRectangle);
+				//Invalidate(this.ClientRectangle);
 			}
 			get {
 				return _imagegif;
@@ -162,9 +162,10 @@ namespace LibPanes
 			try {
 				do {
 					using (PaintEventArgs e = new PaintEventArgs(this.CreateGraphics(), ClientRectangle)) {
-						OnPaint(e);
-						//OnPaint(e);
-					}
+                        //OnPaint(e);
+                        //OnPaint(e);
+                        DrawNextFrame(e);
+                    }
 					Debug.WriteLine("dibujando image ...{" + _imagegif.CurrentFrame + "}");
 					Thread.Sleep(Time);            
 				} while (Accion);
@@ -178,11 +179,11 @@ namespace LibPanes
 		}
 		
 		private bool Accion{ get; set; }
-		
-		
-		[Category("Action")]
-		[Description("time in milisecons to renove imge in component.")]
-		public int Time { get; set; }
+
+
+        [Category("Action")]
+        [Description("time in milisecons to renove imge in component.")]
+        public int Time { get; set; }
 		
 		private void SpritePane_MouseHover(object sender, EventArgs e)
 		{
@@ -202,23 +203,27 @@ namespace LibPanes
         /// dimenions, not the new ones.
         /// </summary>
         /// <param name="levent"></param>
-        protected override void OnLayout(LayoutEventArgs levent)
-        {
-            Debug.WriteLine("SpritePane_OnLayout");
-            // call the base handler first, otherwise we get old 
-            //dimensions, not the new ones
-            base.OnLayout(levent);
-            OnSizeChanged();
-        }
-        private void OnSizeChanged()
-        {
-            Debug.WriteLine("SpritePane_OnSizeChanged()");
-            //aqui no hay nada que dibujar solo actualizar la imagen
-            using (PaintEventArgs e = new PaintEventArgs(this.CreateGraphics(), ClientRectangle))
-            {
-                DrawCurrentFrame(e);
-            }
-        }
+        //protected override void OnLayout(LayoutEventArgs levent)
+        //{
+        //    Debug.WriteLine("SpritePane_OnLayout");
+        //    // call the base handler first, otherwise we get old 
+        //    //dimensions, not the new ones
+        //    base.OnLayout(levent);
+        //    OnSizeChanged(new PaintEventArgs(this.CreateGraphics(), ClientRectangle));
+        //}
+        //private void OnSizeChanged(PaintEventArgs e)
+        //{
+        //    Debug.WriteLine("SpritePane_OnSizeChanged()");
+        //    //var g = this.CreateGraphics();
+        //    //g.Clear(Color.White);
+        //    //aqui no hay nada que dibujar solo actualizar la imagen
+        //    using (PaintEventArgs g = new PaintEventArgs(e.Graphics, ClientRectangle))
+        //    {
+        //        DrawCurrentFrame(g);
+        //    }
+        //    //g.Dispose();
+        //    Refresh();
+        //}
         #endregion
         private void SpritePane_MouseEnter(object sender, EventArgs e)
 		{
@@ -240,30 +245,29 @@ namespace LibPanes
 				_imagegif.SaveImageGif(pathfile);
 			}
 		}
-        protected override void OnResize(EventArgs e)
-        {
-            Debug.WriteLine("SpritePane_OnResize()");
-            base.OnResize(e);
-            OnSizeChanged();
-        }
+        //protected override void OnResize(EventArgs e)
+        //{
+        //    Debug.WriteLine("SpritePane_OnResize()");
+        //    base.OnResize(e);
+        //    OnSizeChanged();
+        //}
 
         protected override void OnPaint(PaintEventArgs e)
-		{
-			Debug.WriteLine("SpritePane_OnPaint()");
-			if (_imagegif != null && Accion == true)
-				DrawNextFrame(e);
-			//if (_imagegif != null && Accion == false)
-			//	DrawCurrentFrame(e);
-			base.OnPaint(e);		
-		}
-		/// <summary>
-		/// complementa OnPaint(PaintEventArgs e)
-		/// </summary>
-		/// <param name="e"></param>
-		private void DrawNextFrame(PaintEventArgs e)
+        {
+            Debug.WriteLine("SpritePane_OnPaint()");
+            if (Accion == true)
+                DrawNextFrame(e);
+            else DrawCurrentFrame(e);
+        }
+        /// <summary>
+        /// complementa OnPaint(PaintEventArgs e)
+        /// </summary>
+        /// <param name="e"></param>
+        private void DrawNextFrame(PaintEventArgs e)
 		{
 			Debug.WriteLine("SpritePane_DrawNexFrame()");
-			Image newImage = new Bitmap(this.Width, this.Height, PixelFormat.Format64bppPArgb);
+            if (_imagegif == null) return;
+            Image newImage = new Bitmap(this.Width, this.Height, PixelFormat.Format64bppPArgb);
                 
 			try {
 				switch (SizeMode) {
@@ -280,6 +284,7 @@ namespace LibPanes
 				}
 				CurrentFrame = _imagegif.CurrentFrame;
 			} catch (Exception ex) {
+                newImage.Dispose();
 				Debug.WriteLine(
 					"Error type: " + ex.GetType().ToString() +
 					"\nMessage: " + ex.Message+
@@ -287,10 +292,12 @@ namespace LibPanes
 					CurrentFrame.ToString() + "\ncount: "+ Count.ToString() +"\n File: " + this.FilePath + "\n"
 				);
 			}
+            newImage.Dispose();
 		}
 		private void DrawCurrentFrame(PaintEventArgs e)
 		{
 			Debug.WriteLine("SpritePane_DrawCurrentFrame()");
+            if (_imagegif == null) return;
 			if (CurrentFrame == -1)
 				CurrentFrame = 0;
 			Image newImage = new Bitmap(this.Width, this.Height, PixelFormat.Format64bppPArgb);
@@ -309,6 +316,7 @@ namespace LibPanes
 						break;	
 				}
 			} catch (Exception ex) {
+                newImage.Dispose();
 				Debug.WriteLine(
 					"Error type: " + ex.GetType().ToString() + 
 					"\nMessage: " + ex.Message +
@@ -316,6 +324,7 @@ namespace LibPanes
 					CurrentFrame.ToString() + "\ncount: "+ Count.ToString()+ "\n File: " + this.FilePath+"\n"
 				);
 			}
+            newImage.Dispose();
 		}
 		/// <summary>
 		/// save all imagens contens in SpritePane
