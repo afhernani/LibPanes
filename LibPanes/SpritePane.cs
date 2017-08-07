@@ -142,6 +142,7 @@ namespace LibPanes
 			if (Path.GetExtension(path).ToUpper() == ".jpg".ToUpper()) {
 				this.SetImageGif = new ImageGif();
 				this.SetImageGif.AddImage((Image)Image.FromFile(path).Clone());
+				CurrentFrame++;
 			}
 		}
 
@@ -197,7 +198,9 @@ namespace LibPanes
 			if (t != null)
 				if (t.IsAlive)
 					return;
-			if (_imagegif == null || CirremtFrame ==-1)
+			if (_imagegif == null && CurremtFrame ==-1)
+				return;
+			if (Count == 1)
 				return;
 			t = new Thread(ActionImagen);
 			t.Start();
