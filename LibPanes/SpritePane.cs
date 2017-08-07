@@ -142,7 +142,7 @@ namespace LibPanes
 			if (Path.GetExtension(path).ToUpper() == ".jpg".ToUpper()) {
 				this.SetImageGif = new ImageGif();
 				this.SetImageGif.AddImage((Image)Image.FromFile(path).Clone());
-				CurrentFrame++;
+				CurrentFrame = 0;
 			}
 		}
 
