@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -11,68 +12,72 @@ using System.Collections.Generic;
 
 namespace LibUtility
 {
-    public class Utility
-    {
-        public static Image BytesToImage(byte[] imageBytes)
-        {
-            if (imageBytes == null || imageBytes.Length == 0)
-            {
-                return null;
-            }
+	public class Utility
+	{
+		public static Image BytesToImage(byte[] imageBytes)
+		{
+			if (imageBytes == null || imageBytes.Length == 0) {
+				return (Image)(new Bitmap(100, 100)).Clone();
+			}
 
-            try
-            {
-                //Read bytes into a MemoryStream
-                using (MemoryStream ms = new MemoryStream(imageBytes))
-                {
-                    //Recreate the frame from the MemoryStream
+			try {
+				//Read bytes into a MemoryStream
+				/*using (MemoryStream ms = new MemoryStream(imageBytes))
+				{
+					//Recreate the frame from the MemoryStream
                     using (Image bmp = Image.FromStream(ms))
-                    {
-                        return (Image)bmp.Clone();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Error type: " + ex.GetType().ToString() + "\n" +
-                    "Message: " + ex.Message,
-                    "Error in " + MethodBase.GetCurrentMethod().Name
-                    );
-            }
+					{
+						return (Image)bmp.Clone();
+					}
+				}*/
+				ImageConverter _imageConverter = new ImageConverter();
+				Image XImage = (Image)_imageConverter.ConvertFrom(imageBytes);
+				return (Image)XImage.Clone();
+			} catch (Exception ex) {
+				Debug.WriteLine(
+					"Error type: " + ex.GetType().ToString() +
+					"\nMessage: " + ex.Message +
+					"\nError in " + MethodBase.GetCurrentMethod().Name
+				);
+			}
 
-            return null;
-        }
+			return (Image)(new Bitmap(100, 100)).Clone();
+		}
 
-        public static byte[] ImageToBytes(Image imagen)
-        {
-            if (imagen == null)
-            {
-                return null;
-            }
-            try
-            {
-                /*
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="imagen"></param>
+		/// <returns></returns>
+		public static byte[] ImageToBytes(Image imagen)
+		{
+			if (imagen == null) {
+				return BitConverter.GetBytes('f');
+			}
+
+			try {
+				/*
                 using (MemoryStream ms =new MemoryStream())
                 {
                     imagen.Save(ms,ImageFormat.MemoryBmp);
                     return ms.ToArray();
                 } */
-                ImageConverter _imageConverter = new ImageConverter();
-                byte[] xByte = (byte[])_imageConverter.ConvertTo(imagen, typeof(byte[]));
-                return xByte;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Error type: " + ex.GetType().ToString() + "\n" +
-                    "Message: " + ex.Message,
-                    "Error in " + MethodBase.GetCurrentMethod().Name
-                    );
-            }
-            return null;
-        }
-/*
+				ImageConverter _imageConverter = new ImageConverter();
+				byte[] xByte = (byte[])_imageConverter.ConvertTo(imagen, typeof(byte[]));
+				return xByte;
+			} catch (Exception ex) {
+				Debug.WriteLine(
+					"Error type: " + ex.GetType().ToString() + "\n" +
+					"\nMessage: " + ex.Message,
+					"\nError in " + MethodBase.GetCurrentMethod().Name + "\n"
+				);
+			}
+
+			return BitConverter.GetBytes('f');
+			;
+		}
+
+		/*
         public static BitmapSource CreateBitmapSourceFromBitmap(Bitmap bitmap)
         {
             if (bitmap == null)
@@ -105,255 +110,278 @@ namespace LibUtility
             }
         }
 */
-        /// <summary>
-        /// Redimensionar imagen de forma proporcional.
-        /// </summary>
-        /// <param name="imgToResize"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public static Image resizeImage(Image imgToResize, System.Drawing.Size size)
-        {
-            int sourceWidth = imgToResize.Width;
-            int sourceHeight = imgToResize.Height;
+		/// <summary>
+		/// Redimensionar imagen de forma proporcional.
+		/// </summary>
+		/// <param name="imgToResize"></param>
+		/// <param name="size"></param>
+		/// <returns></returns>
+		public static Image ResizeImage(Image imgToResize, System.Drawing.Size size)
+		{
+			try {
+				int sourceWidth = imgToResize.Width;
+				int sourceHeight = imgToResize.Height;
 
-            float nPercent = 0;
-            float nPercentW = 0;
-            float nPercentH = 0;
+				float nPercent = 0;
+				float nPercentW = 0;
+				float nPercentH = 0;
 
-            nPercentW = ((float)size.Width / (float)sourceWidth);
-            nPercentH = ((float)size.Height / (float)sourceHeight);
+				nPercentW = ((float)size.Width / (float)sourceWidth);
+				nPercentH = ((float)size.Height / (float)sourceHeight);
 
-            if (nPercentH < nPercentW)
-                nPercent = nPercentH;
-            else
-                nPercent = nPercentW;
+				if (nPercentH < nPercentW)
+					nPercent = nPercentH;
+				else
+					nPercent = nPercentW;
 
-            int destWidth = (int)(sourceWidth * nPercent);
-            int destHeight = (int)(sourceHeight * nPercent);
+				int destWidth = (int)(sourceWidth * nPercent);
+				int destHeight = (int)(sourceHeight * nPercent);
 
-            Bitmap b = new Bitmap(destWidth, destHeight);
-            Graphics g = Graphics.FromImage((Image)b);
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+				Bitmap b = new Bitmap(destWidth, destHeight);
+				Graphics g = Graphics.FromImage((Image)b);
+				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-            g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
-            g.Dispose();
+				g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
+				g.Dispose();
+				return (Image)b.Clone();
+			} catch (Exception ex) {
+				Debug.WriteLine(
+					"Error type: " + ex.GetType().ToString() + "\n" +
+					"\nMessage: " + ex.Message,
+					"\nError in " + MethodBase.GetCurrentMethod().Name + "\n"
+				);
+			}
 
-            return (Image)b.Clone();
-        }
-        /// <summary>
-        /// hacer una copia de una imagen.
-        /// </summary>
-        /// <param name="img"></param>
-        /// <param name="cropArea"></param>
-        /// <returns></returns>
-        public static Image copiImage(Image img, Rectangle cropArea)
-        {
-            Bitmap bmpImage = new Bitmap(img);
-            Bitmap bmpCrop = bmpImage.Clone(cropArea, bmpImage.PixelFormat);
-            return (Image)(bmpCrop.Clone());
-        }
-        /// <summary>
-        /// salvar a fichero una imagen en formato jpg
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="img"></param>
-        /// <param name="quality"></param>
-        public void saveJpeg(string path, Bitmap img, long quality)
-        {
-            // Encoder parameter for image quality
-            EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+			return (Image)(new Bitmap(100, 100)).Clone();
+		}
 
-            // Jpeg image codec
-            ImageCodecInfo jpegCodec = getEncoderInfo("image/jpeg");
+		/// <summary>
+		/// hacer una copia de una imagen.
+		/// </summary>
+		/// <param name="img"></param>
+		/// <param name="cropArea"></param>
+		/// <returns></returns>
+		public static Image CopyImage(Image img, Rectangle cropArea)
+		{
+			try {
+				Bitmap bmpImage = new Bitmap(img);
+				Bitmap bmpCrop = bmpImage.Clone(cropArea, bmpImage.PixelFormat);
+				return (Image)(bmpCrop.Clone());
+			} catch (Exception ex) {
+				Debug.WriteLine(
+					"Error type: " + ex.GetType().ToString() + "\n" +
+					"\nMessage: " + ex.Message,
+					"\nError in " + MethodBase.GetCurrentMethod().Name + "\n"
+				);
+			}
+			return (Image)(new Bitmap(100, 100)).Clone();
+		}
 
-            if (jpegCodec == null)
-                return;
+		/// <summary>
+		/// Salvar a fichero una imagen en formato jpg
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="img"></param>
+		/// <param name="quality"></param>
+		public void SaveJPG(string path, Bitmap img, long quality)
+		{
+			try {
+				// Encoder parameter for image quality
+				EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
 
-            EncoderParameters encoderParams = new EncoderParameters(1);
-            encoderParams.Param[0] = qualityParam;
+				// Jpeg image codec
+				ImageCodecInfo jpegCodec = getEncoderInfo("image/jpeg");
 
-            img.Save(path, jpegCodec, encoderParams);
-        }
-        /// <summary>
-        /// obtener el codigo de que tipo de imagen es.
-        /// </summary>
-        /// <param name="mimeType"></param>
-        /// <returns></returns>
-        private static ImageCodecInfo getEncoderInfo(string mimeType)
-        {
-            // Get image codecs for all image formats
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+				if (jpegCodec == null)
+					return;
 
-            // Find the correct image codec
-            for (int i = 0; i < codecs.Length; i++)
-                if (codecs[i].MimeType == mimeType)
-                    return codecs[i];
-            return null;
-        }
-        /// <summary>
-        /// Redimensionar imagen con deformacion
-        /// </summary>
-        /// <param name="srcImage"></param>
-        /// <param name="newWidth"></param>
-        /// <param name="newHeight"></param>
-        /// <returns></returns>
-        public static Image ResizeImage(Image srcImage, int newWidth, int newHeight)
-        {
-            using (Bitmap imagenBitmap =
-               new Bitmap(newWidth, newHeight, PixelFormat.Format32bppRgb))
-            {
-                imagenBitmap.SetResolution(
-                   Convert.ToInt32(srcImage.HorizontalResolution),
-                   Convert.ToInt32(srcImage.HorizontalResolution));
+				EncoderParameters encoderParams = new EncoderParameters(1);
+				encoderParams.Param[0] = qualityParam;
 
-                using (Graphics imagenGraphics =
-                        Graphics.FromImage(imagenBitmap))
-                {
-                    imagenGraphics.SmoothingMode =
+				img.Save(path, jpegCodec, encoderParams);
+				qualityParam.Dispose();
+				encoderParams.Dispose();
+			} catch (Exception ex) {
+				Debug.WriteLine(
+					"Error type: " + ex.GetType().ToString() + "\n" +
+					"\nMessage: " + ex.Message,
+					"\nError in " + MethodBase.GetCurrentMethod().Name + "\n"
+				);
+			}
+		}
+
+		/// <summary>
+		/// Obtener el codigo del tipo de la Imagen.
+		/// si no existe devuelve parametro null.
+		/// </summary>
+		/// <param name="mimeType"></param>
+		/// <returns></returns>
+		private static ImageCodecInfo getEncoderInfo(string mimeType)
+		{
+			// Get image codecs for all image formats
+			ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+
+			// Find the correct image codec
+			for (int i = 0; i < codecs.Length; i++)
+				if (codecs[i].MimeType == mimeType)
+					return codecs[i];
+			return null;
+		}
+
+		/// <summary>
+		/// Redimensionar imagen con deformacion
+		/// Ajusta una imagen a las dimensiones especificadas.
+		/// </summary>
+		/// <param name="srcImage"></param>
+		/// <param name="newWidth"></param>
+		/// <param name="newHeight"></param>
+		/// <returns></returns>
+		public static Image ResizeImage(Image srcImage, int newWidth, int newHeight)
+		{
+			using (Bitmap imagenBitmap =
+				       new Bitmap(newWidth, newHeight, PixelFormat.Format32bppRgb)) {
+				imagenBitmap.SetResolution(
+					Convert.ToInt64(srcImage.HorizontalResolution),
+					Convert.ToInt64(srcImage.HorizontalResolution));
+
+				using (Graphics imagenGraphics =
+					       Graphics.FromImage(imagenBitmap)) {
+					imagenGraphics.SmoothingMode =
                        SmoothingMode.AntiAlias;
-                    imagenGraphics.InterpolationMode =
+					imagenGraphics.InterpolationMode =
                        InterpolationMode.HighQualityBicubic;
-                    imagenGraphics.PixelOffsetMode =
+					imagenGraphics.PixelOffsetMode =
                        PixelOffsetMode.HighQuality;
-                    imagenGraphics.DrawImage(srcImage,
-                       new Rectangle(0, 0, newWidth, newHeight),
-                       new Rectangle(0, 0, srcImage.Width, srcImage.Height),
-                       GraphicsUnit.Pixel);
-                    MemoryStream imagenMemoryStream = new MemoryStream();
-                    imagenBitmap.Save(imagenMemoryStream, ImageFormat.Jpeg);
-                    srcImage = Image.FromStream(imagenMemoryStream);
-                }
-            }
-            return srcImage;
-        }
-        /// <summary>
-        /// redimensionar una imagen sin deformacion, en el tamaño de cuadros predefinidos
-        /// entero pix, representa la base sobre la dimension 4:3 o 16:9.
-        /// corto, refiere al formato 4:3 true, false ->16:9
-        /// </summary>
-        /// <param name="imgToResize"></param>
-        /// <param name="pix"></param>
-        /// <param name="corto"></param>
-        /// <returns></returns>
-        public static Image ResizeImage(Image imgToResize, int pix, bool corto)
-        {
-            System.Drawing.Size size;
-            int _width; int _height;
-            try
-            {
-                //dimensiones de imagenes 4:3 y 16:9 ¿? cual aplicamos
-                if (corto)
-                {
-                    _width = pix * 4; _height = pix * 3;
-                }
-                else
-                {
-                    _width = pix * 16; _height = pix * 9;
-                }
-                size = new System.Drawing.Size(_width, _height);
-                Image imgRedim = resizeImage(imgToResize, size);
+					imagenGraphics.DrawImage(srcImage,
+						new Rectangle(0, 0, newWidth, newHeight),
+						new Rectangle(0, 0, srcImage.Width, srcImage.Height),
+						GraphicsUnit.Pixel);
+					MemoryStream imagenMemoryStream = new MemoryStream();
+					imagenBitmap.Save(imagenMemoryStream, ImageFormat.Jpeg);
+					srcImage = Image.FromStream(imagenMemoryStream);
+					imagenMemoryStream.Dispose();
+				}
+			}
 
-                Bitmap marco = new Bitmap(_width, _height);
-                Graphics gc = Graphics.FromImage((Image)marco);
-                gc.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			return srcImage;
+		}
 
-                if (imgRedim.Height == _height)
-                {
-                    if (imgRedim.Width == _width)
-                    {
-                        gc.DrawImage(imgRedim, 0, 0);
-                    }
-                    else
-                    {
-                        gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, 0);
-                    }
-                }
-                else if (imgRedim.Width == _width)
-                {
-                    gc.DrawImage(imgRedim, 0, (_height - imgRedim.Height) / 2);
-                }
-                else
-                {
-                    gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, (_height - imgRedim.Height) / 2);
-                }
-                gc.Dispose();
-                return (Image)marco;
+		/// <summary>
+		/// Redimensionar una imagen sin deformacion, en el tamaño de cuadros predefinidos
+		/// entero pix, representa la base sobre la dimension 4:3 o 16:9.
+		/// corto, refiere al formato 4:3 true, false ->16:9
+		/// En caso de error devuelve la misma imagen
+		/// </summary>
+		/// <param name="imgToResize"></param>
+		/// <param name="pix"></param>
+		/// <param name="corto"></param>
+		/// <returns></returns>
+		public static Image ResizeImage(Image imgToResize, int pix, bool corto)
+		{
+			System.Drawing.Size size;
+			int _width;
+			int _height;
+			try {
+				//dimensiones de imagenes 4:3 y 16:9 ¿? cual aplicamos
+				if (corto) {
+					_width = pix * 4;
+					_height = pix * 3;
+				} else {
+					_width = pix * 16;
+					_height = pix * 9;
+				}
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            return null;
-        }
-        /// <summary>
-        /// redimensionar una imagen sin deformacion.
-        /// center true or falce.
-        /// </summary>
-        /// <param name="imgToResize"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="center"></param>
-        /// <returns></returns>
-        public static Image ResizeImage(Image imgToResize, int width, int height, bool center)
-        {
-            System.Drawing.Size size;
-            int _width = width; int _height = height;
-            try
-            {
+				size = new System.Drawing.Size(_width, _height);
+				using (Image imgRedim = ResizeImage(imgToResize, size)) {
+					Bitmap marco = new Bitmap(_width, _height);
+					Graphics gc = Graphics.FromImage((Image)marco);
+					gc.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                size = new System.Drawing.Size(_width, _height);
-                Image imgRedim = resizeImage(imgToResize, size);
+					if (imgRedim.Height == _height) {
+						if (imgRedim.Width == _width) {
+							gc.DrawImage(imgRedim, 0, 0);
+						} else {
+							gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, 0);
+						}
+					} else if (imgRedim.Width == _width) {
+						gc.DrawImage(imgRedim, 0, (_height - imgRedim.Height) / 2);
+					} else {
+						gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, (_height - imgRedim.Height) / 2);
+					}
+				
+					gc.Dispose();
+					return (Image)marco;
+				}
+			} catch (Exception ex) {
+				Debug.WriteLine(
+                    "Error type: " + ex.GetType().ToString() + "\n" +
+                    "\nMessage: " + ex.Message,
+                    "\nError in " + MethodBase.GetCurrentMethod().Name +"\n"
+                   );
+			}
+			//devolvemos la misma imagen si hay un error
+			return imgToResize;
+		}
 
-                Bitmap marco = new Bitmap(_width, _height);
-                Graphics gc = Graphics.FromImage((Image)marco);
-                gc.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                gc.Clear(Color.Transparent);
-                if (center)
-                {
-                    if (imgRedim.Height == _height)
-                    {
-                        if (imgRedim.Width == _width)
-                        {
-                            gc.DrawImage(imgRedim, 0, 0);
-                        }
-                        else
-                        {
-                            gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, 0);
-                        }
-                    }
-                    else if (imgRedim.Width == _width)
-                    {
-                        gc.DrawImage(imgRedim, 0, (_height - imgRedim.Height) / 2);
-                    }
-                    else
-                    {
-                        gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, (_height - imgRedim.Height) / 2);
-                    }
-                }
-                else
-                {
-                    gc.DrawImage(imgRedim, 0, 0);
-                }
-                gc.Dispose();
-                return (Image)marco.Clone();
+		/// <summary>
+		/// redimensionar una imagen sin deformacion.
+		/// center true or falce.
+		/// </summary>
+		/// <param name="imgToResize"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="center"></param>
+		/// <returns></returns>
+		public static Image ResizeImage(Image imgToResize, int width, int height, bool center)
+		{
+			System.Drawing.Size size;
+			int _width = width;
+			int _height = height;
+			try {
+				size = new System.Drawing.Size(_width, _height);
+				using (Image imgRedim = ResizeImage(imgToResize, size)) {
+					Bitmap marco = new Bitmap(_width, _height);
+					Graphics gc = Graphics.FromImage((Image)marco);
+					gc.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					gc.Clear(Color.Transparent);
+					if (center) {
+						if (imgRedim.Height == _height) {
+							if (imgRedim.Width == _width) {
+								gc.DrawImage(imgRedim, 0, 0);
+							} else {
+								gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, 0);
+							}
+						} else if (imgRedim.Width == _width) {
+							gc.DrawImage(imgRedim, 0, (_height - imgRedim.Height) / 2);
+						} else {
+							gc.DrawImage(imgRedim, (_width - imgRedim.Width) / 2, (_height - imgRedim.Height) / 2);
+						}
+					} else {
+						gc.DrawImage(imgRedim, 0, 0);
+					}
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            return null;
-        }
+					gc.Dispose();
+					return (Image)marco.Clone();
+				}
+			} catch (Exception ex) {
+				Debug.WriteLine(
+                    "Error type: " + ex.GetType().ToString() + "\n" +
+                    "\nMessage: " + ex.Message,
+                    "\nError in " + MethodBase.GetCurrentMethod().Name +"\n"
+                   );
+			}
 
-        /// <summary>
-        ///  +++++ en desarrollo +++
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="img"></param>
-        public static void saveGif(string path, Bitmap[] img)
-        {
-            /*
+			return imgToResize;
+		}
+
+		/// <summary>
+		///  +++++ en desarrollo +++
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="img"></param>
+		public static void saveGif(string path, Bitmap[] img)
+		{
+			/*
             try
             {
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -416,111 +444,113 @@ namespace LibUtility
             myEncoderParameters.Param[1] = encQualityParameter;
             //myBitmap.Save("Output.gif", myImageCodecInfo, myEncoderParameters);
             */
-        }
-        /// <summary>
-        /// Devuelve una imagen que es la diferencia entre las imagenes
-        /// pasadas
-        /// </summary>
-        /// <param name="imgleft"></param>
-        /// <param name="imgrignt"></param>
-        /// <returns></returns>
-        public static Image DifferenceTwoImages(Image imgleft, Image imgrignt)
-        {
-            int width = imgleft.Width;
-            int height = imgleft.Height;
-            if (width != imgrignt.Width && height != imgrignt.Height)
-                imgrignt = ResizeImage(imgrignt, width, height, true);
+		}
 
-            //obtenemos la dimension de la imagen imgleft y la comparamos con la
-            //imgright.
-            //si son iguales segimos, si no lo son igualamos la dimensiones de imgright
-            //por deformacion o sin deformacion.
-            Bitmap marco = new Bitmap(width, height);
-            marco.MakeTransparent();
-            // Loop through the images pixels to reset color.
-            for (int x = 0; x < imgleft.Width; x++)
-            {
-                for (int y = 0; y < imgleft.Height; y++)
-                {
-                    Color pixelColorL = ((Bitmap)imgleft).GetPixel(x, y);
-                    Color pixelColorR = ((Bitmap)imgrignt).GetPixel(x, y);
-                    if (!pixelColorL.Equals(pixelColorR)) marco.SetPixel(x, y, pixelColorR);
-                }
-            }
-            //crea una bitmap vacio que va almacenar la diferencia entre las imagenes
-            //recorre los pixels de imgleft e imgright y si son diferentes guarda en el marco.
-            //si son iguales continua.
-            return (Image)marco.Clone();
-        }
-        /// <summary>
-        /// Superpone una imagen sobre otra y devuelve el resultado.
-        /// </summary>
-        /// <param name="below"></param>
-        /// <param name="above"></param>
-        /// <returns></returns>
-        public static Image PuttingUpImage(Image below, Image above)
-        {
-            //Bitmap marco = new Bitmap(below.Width, below.Height);
-            Graphics gc = Graphics.FromImage(below);
-            gc.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            gc.DrawImage(above, 0, 0);
-            gc.Dispose();
-            return (Image)below.Clone();
-            
-        }
+		/// <summary>
+		/// Devuelve una imagen que es la diferencia entre las imagenes
+		/// pasadas
+		/// </summary>
+		/// <param name="imgleft"></param>
+		/// <param name="imgrignt"></param>
+		/// <returns></returns>
+		public static Image DifferenceTwoImages(Image imgleft, Image imgrignt)
+		{
+			int width = imgleft.Width;
+			int height = imgleft.Height;
+			if (width != imgrignt.Width && height != imgrignt.Height)
+				imgrignt = ResizeImage(imgrignt, width, height, true);
 
-        /// <summary>
-        /// Salva un conjunto de imagenes como un fichero Tiff.
-        /// </summary>
-        /// <param name="outfilename"></param>
-        /// <param name="listOriginals"></param>
-        public static void SaveAsMultiPageTiff(string outfilename, List<Image> listOriginals)
-        {
-            Encoder encoder = Encoder.SaveFlag;
-            ImageCodecInfo encoderInfo = ImageCodecInfo.GetImageEncoders().First(i => i.MimeType == "image/tiff");
-            EncoderParameters encoderParameters = new EncoderParameters(1);
-            encoderParameters.Param[0] = new EncoderParameter(encoder, (long)EncoderValue.MultiFrame);
+			//obtenemos la dimension de la imagen imgleft y la comparamos con la
+			//imgright.
+			//si son iguales segimos, si no lo son igualamos la dimensiones de imgright
+			//por deformacion o sin deformacion.
+			Bitmap marco = new Bitmap(width, height);
+			marco.MakeTransparent();
+			// Loop through the images pixels to reset color.
+			for (int x = 0; x < imgleft.Width; x++) {
+				for (int y = 0; y < imgleft.Height; y++) {
+					Color pixelColorL = ((Bitmap)imgleft).GetPixel(x, y);
+					Color pixelColorR = ((Bitmap)imgrignt).GetPixel(x, y);
+					if (!pixelColorL.Equals(pixelColorR))
+						marco.SetPixel(x, y, pixelColorR);
+				}
+			}
 
-            // Save the first frame of the multi page tiff
-            Bitmap firstImage = (Bitmap)listOriginals[0];
-            firstImage.Save(outfilename, encoderInfo, encoderParameters);
+			//crea una bitmap vacio que va almacenar la diferencia entre las imagenes
+			//recorre los pixels de imgleft e imgright y si son diferentes guarda en el marco.
+			//si son iguales continua.
+			return (Image)marco.Clone();
+		}
 
-            encoderParameters.Param[0] = new EncoderParameter(encoder, (long)EncoderValue.FrameDimensionPage);
+		/// <summary>
+		/// Superpone una imagen sobre otra y devuelve el resultado.
+		/// </summary>
+		/// <param name="below"></param>
+		/// <param name="above"></param>
+		/// <returns></returns>
+		public static Image PuttingUpImage(Image below, Image above)
+		{
+			//Bitmap marco = new Bitmap(below.Width, below.Height);
+			Graphics gc = Graphics.FromImage(below);
+			gc.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			gc.DrawImage(above, 0, 0);
+			gc.Dispose();
+			return (Image)below.Clone();
+		}
 
-            // Add the remining images to the tiff
-            for (int i = 1; i < listOriginals.Count; i++)
-            {
-                Bitmap img = (Bitmap)listOriginals[i];
-                firstImage.SaveAdd(img, encoderParameters);
-            }
+		/// <summary>
+		/// Salva un conjunto de imagenes como un fichero Tiff.
+		/// </summary>
+		/// <param name="outfilename"></param>
+		/// <param name="listOriginals"></param>
+		public static void SaveAsMultiPageTiff(string outfilename, List<Image> listOriginals)
+		{
+			Encoder encoder = Encoder.SaveFlag;
+			ImageCodecInfo encoderInfo = ImageCodecInfo.GetImageEncoders().First(i => i.MimeType == "image/tiff");
+			EncoderParameters encoderParameters = new EncoderParameters(1);
+			encoderParameters.Param[0] = new EncoderParameter(encoder, (long)EncoderValue.MultiFrame);
 
-            // Close out the file
-            encoderParameters.Param[0] = new EncoderParameter(encoder, (long)EncoderValue.Flush);
-            firstImage.SaveAdd(encoderParameters);
+			// Save the first frame of the multi page tiff
+			Bitmap firstImage = (Bitmap)listOriginals[0];
+			firstImage.Save(outfilename, encoderInfo, encoderParameters);
 
-        }
-        /// <summary>
-        /// Carga las distintas imagenes de un fichero tiff.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static List<Image> OpenMultiPageTiff(string file)
-        {
-            List<Image> images = new List<Image>();
-            Bitmap bitmap = (Bitmap)Image.FromFile(file);
-            int count = bitmap.GetFrameCount(FrameDimension.Page);
-            for (int idx = 0; idx < count; idx++)
-            {
-                // save each frame to a bytestream
-                bitmap.SelectActiveFrame(FrameDimension.Page, idx);
-                MemoryStream byteStream = new MemoryStream();
-                bitmap.Save(byteStream, ImageFormat.Tiff);
+			encoderParameters.Param[0] = new EncoderParameter(encoder, (long)EncoderValue.FrameDimensionPage);
 
-                // and then create a new Image from it
-                images.Add(Image.FromStream(byteStream));
-            }
-            return images;
-        }
+			// Add the remining images to the tiff
+			for (int i = 1; i < listOriginals.Count; i++) {
+				Bitmap img = (Bitmap)listOriginals[i];
+				firstImage.SaveAdd(img, encoderParameters);
+				img.Dispose();
+			}
 
-    }
+			// Close out the file
+			encoderParameters.Param[0] = new EncoderParameter(encoder, (long)EncoderValue.Flush);
+			firstImage.SaveAdd(encoderParameters);
+			firstImage.Dispose();
+		}
+
+		/// <summary>
+		/// Carga las distintas imagenes de un fichero tiff.
+		/// </summary>
+		/// <param name="file"></param>
+		/// <returns></returns>
+		public static List<Image> OpenMultiPageTiff(string file)
+		{
+			List<Image> images = new List<Image>();
+			Bitmap bitmap = (Bitmap)Image.FromFile(file);
+			int count = bitmap.GetFrameCount(FrameDimension.Page);
+			for (int idx = 0; idx < count; idx++) {
+				// save each frame to a bytestream
+				bitmap.SelectActiveFrame(FrameDimension.Page, idx);
+				MemoryStream byteStream = new MemoryStream();
+				bitmap.Save(byteStream, ImageFormat.Tiff);
+
+				// and then create a new Image from it
+				images.Add(Image.FromStream(byteStream));
+				byteStream.Dispose();
+			}
+			bitmap.Dispose();
+			return images;
+		}
+	}
 }
