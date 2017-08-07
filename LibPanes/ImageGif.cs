@@ -29,7 +29,7 @@ namespace LibPanes
 		private Image GifImage { get; set; }
 		//private Image Frame{ get; set; }
 		private FrameDimension Dimension { get; set; }
-		private int Count { get; set; }
+        private int Count { get; set; } = 0;
 		public int CurrentFrame { get; set; }
 		private bool Reverse { get; set; }
 		private int Step { get; set; }
@@ -133,7 +133,7 @@ namespace LibPanes
 			CurrentFrame = index;
 			if (CurrentFrame < Count && CurrentFrame >= 0)
 			{
-				return ConvertBytesToImage(frames[index]);
+				return Utility.BytesToImage(frames[index]);
 			}
 
 			return (Image)(new Bitmap(200, 100){ }).Clone();
@@ -233,36 +233,6 @@ namespace LibPanes
 			}
 		}
 
-		private Bitmap ConvertBytesToImage(byte[] imageBytes)
-		{
-			if (imageBytes == null || imageBytes.Length == 0)
-			{
-				return new Bitmap(100,100);
-			}
-
-			try
-			{
-				//Read bytes into a MemoryStream
-                using (MemoryStream ms = new MemoryStream(imageBytes))
-				{
-					//Recreate the frame from the MemoryStream
-                    using (Bitmap bmp = new Bitmap(ms))
-					{
-						return (Bitmap)bmp.Clone();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(
-                    "Error type: " + ex.GetType().ToString() + 
-                    "\nMessage: " + ex.Message +
-                    "\nError in " + MethodBase.GetCurrentMethod().Name + "\n"
-                  );
-			}
-			return new Bitmap(100,100);
-		}
-
 		#region addImagen
 		/// <summary>
 		/// adicionar una imagen a la lista de imagenes.
@@ -291,7 +261,7 @@ namespace LibPanes
 			Debug.WriteLine("Redimensionar Imagen ... ");
 			if (frames.Count>0 && frames!= null)
 			{
-				Image size = ConvertBytesToImage(frames[0]);
+				Image size = Utility.BytesToImage(frames[0]);
 				return (Image) LibUtility.Utility.ResizeImage(imagen, size.Width, size.Height, true).Clone();
 			}
 			else
@@ -346,7 +316,7 @@ namespace LibPanes
             int n = 000;
 			foreach (var item in frames)
 			{
-				Image paso = ConvertBytesToImage(item);
+				Image paso = Utility.BytesToImage(item);
 				paso.Save(Path.Combine(dir, nameb + n.ToString())+ext);
 				n++;
 			}
@@ -359,7 +329,7 @@ namespace LibPanes
 		/// <param name="path"></param>
         public void SaveCurrentImagen(string path)
 		{
-			Image pas = ConvertBytesToImage(frames[CurrentFrame]);
+			Image pas = Utility.BytesToImage(frames[CurrentFrame]);
 			pas.Save(path);
 		}
 
