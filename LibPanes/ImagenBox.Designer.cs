@@ -18,6 +18,8 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+            if (t != null)
+                t.Abort();
         }
 
         #region Código generado por el Diseñador de componentes
