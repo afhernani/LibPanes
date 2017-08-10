@@ -41,6 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImagenBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImagenBox.Designer.cs">
+      <DependentUpon>ImagenBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpritePane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -57,6 +63,9 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ImagenBox.resx">
+      <DependentUpon>ImagenBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SpritePane.resx">
       <DependentUpon>SpritePane.cs</DependentUpon>
     </EmbeddedResource>

@@ -201,7 +201,7 @@ namespace LibPanes
 					return;
 			if (_imagegif == null && CurrentFrame ==-1)
 				return;
-			if (Count == 1)
+			if (Count <= 0)
 				return;
 			t = new Thread(ActionImagen);
 			t.Start();
