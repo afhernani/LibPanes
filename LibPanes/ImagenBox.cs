@@ -379,7 +379,7 @@ namespace LibPanes
             tar = Task.Factory.StartNew(new Action(() => TasKSaveImageGif(pathfile)));
         }
 
-        public void TasKSaveImageGif(string pathfile)
+        private void TasKSaveImageGif(string pathfile)
         {
             if (ImagenList.Count == 0 || ImagenList == null)
                 return;
