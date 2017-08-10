@@ -339,7 +339,7 @@ namespace LibPanes
 
         void ImagenBox_MouseHover(object sender, EventArgs e)
         {
-            Debug.WriteLine("SpritePane_SpritePane_MouseHover()");
+            Debug.WriteLine("ImagenBox_MouseHover()");
             if (t != null)
                 if (t.IsAlive)
                     return;
@@ -354,13 +354,13 @@ namespace LibPanes
 
         void ImagenBox_MouseEnter(object sender, EventArgs e)
         {
-            Debug.WriteLine("SpritePane_SpritePane_MouseEnter()");
+            Debug.WriteLine("ImagenBox_MouseEnter()");
             Accion = true;
         }
 
         void ImagenBox_MouseLeave(object sender, EventArgs e)
         {
-            Debug.WriteLine("SpritePane_SpritePaneMuseLeave()");
+            Debug.WriteLine("ImagenBox_MuseLeave()");
             //no mata la tarea si está en automatico
             if (Automatic) return;
             Accion = false;
