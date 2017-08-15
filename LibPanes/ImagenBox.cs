@@ -180,7 +180,7 @@ namespace LibPanes
             if (Count <= 0) //no hay imagen que mostrar
                 CurrentFrame = -1;
             else
-                GetFrame(0);//se muestra la primera imagen cargada
+                GetNextFrame();//se muestra la primera imagen cargada
             this.Invalidate(this.ClientRectangle);
 
             //todo: se extrae la conclusion que solo necesitmaos
