@@ -53,7 +53,7 @@ namespace LibPanes
         private int Step { get; set; }
         private string _namepathfile;
         [Category("ImagenBox")]
-        [Description("string represent path complete to imagen in ImagenBox.")]
+        [Description("string represent path complete to imagen in ImagenBox. Allow to load Image FromFile")]
         public string NamePathFile
         {
             get
