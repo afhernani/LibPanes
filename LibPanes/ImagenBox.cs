@@ -40,7 +40,24 @@ namespace LibPanes
         [Category("ImagenBox")]
         [Description("int represent how show the next imagen in ImagenBox.")]
         public int CurrentFrame { get; set; }
+        [Category("ImagenBox")]
+        [Description("set Imagen to show")]
+        public int SetCurrentFrame
+        {
+            get
+            {
+                return CurrentFrame;
+            }
+            set
+            {
+                if(value < Count)
+                {
+                    CurrentFrame = value;
+                    GetFrame(CurrentFrame);
+                }
 
+            }
+        }
         /// <summary>
         /// reverse at end
         /// </summary>
