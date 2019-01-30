@@ -139,6 +139,21 @@ namespace LibPanes
             SizeMode = PictureBoxSizeMode.Zoom;
             Accion = false;
         }
+        /// <summary>
+        /// Reset ImagenList
+        /// </summary>
+        public void Reset()
+        {
+            ImagenList = new List<ImageU>();
+            CurrentFrame = -1;
+            _count = 0;
+            Reverse = false;
+            Step = 1;
+            Time = 800;
+            NamePathFile = String.Empty;
+            SizeMode = PictureBoxSizeMode.Zoom;
+            Accion = false;
+        }
 
         #region presentacion
 
