@@ -51,10 +51,22 @@ namespace LibPanes
         [Category("ImagenBox")]
         [Description("int represent jump to next imagen in ImagenBox.")]
         private int Step { get; set; }
-
+        private string _namepathfile;
         [Category("ImagenBox")]
         [Description("string represent path complete to imagen in ImagenBox.")]
-        public string NamePathFile { get; set; }
+        public string NamePathFile
+        {
+            get
+            {
+                return String.IsNullOrEmpty(_namepathfile) ?"Ninguno" : _namepathfile;
+            }
+            set
+            {
+                _namepathfile = value;
+                if (!String.IsNullOrEmpty(_namepathfile))
+                    this.FromFile(value);
+            }
+        }
 
         [Category("ImagenBox")]
         [Description("milisegons represent time to next imagen in ImagenBox.")]
