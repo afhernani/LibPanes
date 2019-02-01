@@ -193,6 +193,7 @@ namespace LibPanes
         {
             //se supone que existe.
             Debug.WriteLine("ImageBox_FromFile()");
+            if (!File.Exists(pathImage)) return;
             using (var stream = File.Open(pathImage, FileMode.Open))
             {
                 Image img = Image.FromStream(stream);
